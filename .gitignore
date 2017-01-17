@@ -4,3 +4,6 @@ Scripts/
 pip-selfcheck.json  
 requirements.txt  
 tcl/
+venv/
+.idea/
+*.pyc
