@@ -68,6 +68,9 @@ class Hero(object):
                 self.__anger -= skill.attack_enemy(target_team, me_state, self.__prop)
 
     def is_attacked(self, damage, debuff, src_hero_prop):
+        if self.dead:
+            return
+
         self.__debuff = debuff
 
         hit = (random.random() < (src_hero_prop.hit_rate - self.__prop.dodge_rate))
@@ -84,7 +87,8 @@ class Hero(object):
 
         damage = int(damage)
         self.__cur_life -= int(damage)
-        self.__anger += 15
+        if damage > 0:
+            self.__anger += 15
 
         if critical_damage:
             logging.warning('Hero is attacked by critical damage {}(Base damage: {})! Current status is {}'
@@ -113,4 +117,4 @@ class HeroTemplate(object):
 
     @staticmethod
     def gen_healer(idx=1, team=None):
-        return Hero(SkillTemplate.gen_healer_skills(), 3000 + 1000 * idx, prop=HeroProp(0.1, 1, 0.1, -300), team=team)
+        return Hero(SkillTemplate.gen_healer_skills(), 3000 + 1000 * idx, prop=HeroProp(0.1, 1, 0.1, -400), team=team)
