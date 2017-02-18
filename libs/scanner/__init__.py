@@ -30,14 +30,14 @@ class SourceScanner(object):
             try:
                 module = importlib.import_module(module_name)
                 module_objs.append(module)
-                logger.info('Import module: {}'.format(module_name))
+                # logger.info('Import module: {}'.format(module_name))
             except ImportError:
                 logger.warn('Name {} is not a module'.format(module_name))
 
         import inspect
         for module in module_objs:
             all_functions = inspect.getmembers(module, inspect.isfunction)
-            logger.debug('Functions: {}'.format(all_functions))
+            # logger.debug('Functions: {}'.format(all_functions))
 
             for func_name, func in all_functions:
                 matcher = self.pattern.match(func_name)
