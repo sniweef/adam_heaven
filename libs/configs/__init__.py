@@ -1,9 +1,11 @@
 import os
+from libs.logger import logger
 
 
 def load_config():
     """加载配置类"""
     mode = os.environ.get('MODE')
+    logger.info('Current mode: ' + mode)
 
     try:
         if mode == 'PRODUCTION':

@@ -12,7 +12,7 @@ class DbManager(object):
         if not DbManager.set_up:
             DbManager.db.init_app(app)
 
-            from um.models import User, Role
+            from um.models import User, Role, Permission
 
             DbManager.migrate = Migrate(app, DbManager.db)
             manager.add_command('db', MigrateCommand)

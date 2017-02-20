@@ -12,7 +12,7 @@ def create_app():
 
     os.environ['MODE'] = 'DEVELOPMENT'
     app.config.from_object(load_config())
-    # CsrfProtect(app)
+    CsrfProtect(app)
     return app
 
 

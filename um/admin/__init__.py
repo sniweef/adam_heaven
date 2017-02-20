@@ -9,13 +9,15 @@ from .views import AccessCheckView
 
 
 def set_up_admin(app, *args):
-    admin = Admin(app, index_view=AdminIndexView(url='/um/admin'))
+    admin = Admin(app, base_template='my_master.html',
+                  template_mode='bootstrap3')
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     security = Security(app, user_datastore)
 
     admin.add_view(AccessCheckView(User, db.session))
     admin.add_view(AccessCheckView(Role, db.session))
+    admin.add_view(AccessCheckView(Permission, db.session))
 
     @security.context_processor
     def security_context_processor():
