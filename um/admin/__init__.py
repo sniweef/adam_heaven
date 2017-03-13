@@ -9,8 +9,7 @@ from .views import AccessCheckView
 
 
 def set_up_admin(app, *args):
-    admin = Admin(app, base_template='my_master.html',
-                  template_mode='bootstrap3')
+    admin = Admin(app, base_template='my_master.html', template_mode='bootstrap3')
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     security = Security(app, user_datastore)

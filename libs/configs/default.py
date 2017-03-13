@@ -19,7 +19,7 @@ class Config(object):
 
     # Flask-Security features
     SECURITY_REGISTERABLE = True
-    # SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_SEND_REGISTER_EMAIL = False
 
     SECURITY_POST_LOGIN_VIEW = "/admin/"
     SECURITY_POST_LOGOUT_VIEW = "/admin/"
