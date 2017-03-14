@@ -13,6 +13,8 @@ class DbManager(object):
             DbManager.db.init_app(app)
 
             from um.models import User, Role, Permission
+            from blog.models import ArticleType, Source, Article, Comment, Follow, Menu, ArticleTypeSetting,\
+                BlogInfo, Plugin
 
             DbManager.migrate = Migrate(app, DbManager.db)
             manager.add_command('db', MigrateCommand)

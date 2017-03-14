@@ -1,9 +1,10 @@
+# encoding=utf-8
 import os
 from libs.logger import logger
 
 
 def load_config():
-    """加载配置类"""
+    """Load config"""
     mode = os.environ.get('MODE')
     logger.info('Current mode: ' + mode)
 

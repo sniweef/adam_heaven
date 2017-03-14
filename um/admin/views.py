@@ -5,18 +5,20 @@ from flask import abort, redirect, url_for, request
 from passlib.hash import pbkdf2_sha512
 from libs.logger import logger
 from flask import current_app
+from ..permissions import AcquiredPermission, has_permission
 
 
 class AccessCheckView(sqla.ModelView):
+
+    def __init__(self, *args, **kwargs):
+        self.permission = kwargs.pop('permission', AcquiredPermission.ADMIN)
+        super(AccessCheckView, self).__init__(*args, **kwargs)
 
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
             return False
 
-        # if current_user.has_role('superuser'):
-        #    return True
-
-        return True
+        return has_permission(self.permission)
 
     def _handle_view(self, name, **kwargs):
         """
@@ -31,9 +33,13 @@ class AccessCheckView(sqla.ModelView):
                 return redirect(url_for('security.login', next=request.url))
 
     def create_model(self, form):
-        org_pwd = form.password.data
-        encrypted_pwd = encrypt_password(org_pwd)
+        try:
+            org_pwd = form.password.data
+            encrypted_pwd = encrypt_password(org_pwd)
 
-        logger.info('Encrypt password {} to {}'.format(org_pwd, encrypted_pwd))
-        form.password.data = encrypted_pwd
+            logger.info('Encrypt password {} to {}'.format(org_pwd, encrypted_pwd))
+            form.password.data = encrypted_pwd
+        except AttributeError:
+            pass
+
         super(AccessCheckView, self).create_model(form)
