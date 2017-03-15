@@ -2,6 +2,7 @@ import os
 from flask import Blueprint
 from libs.utils import register_sub_bp
 from um.admin import set_up_admin  # keep this
+from .models import *
 
 
 #def get_um_bp():
@@ -11,3 +12,7 @@ from um.admin import set_up_admin  # keep this
 #    register_sub_bp('um/', auth_bp)
 
 #    return auth_bp
+def deploy_product_data():
+    Permission.insert_permissions()
+    Role.insert_roles()
+    User.insert_root()

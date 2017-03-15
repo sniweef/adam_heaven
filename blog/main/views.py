@@ -19,7 +19,7 @@ def index():
             page, per_page=current_app.config['ARTICLES_PER_PAGE'],
             error_out=False)
     articles = pagination.items
-    return render_template('index.html', articles=articles,
+    return render_template('blog_index.html', articles=articles,
                            pagination=pagination, endpoint='.index')
 
 
@@ -32,7 +32,7 @@ def articleTypes(id):
             page, per_page=current_app.config['ARTICLES_PER_PAGE'],
             error_out=False)
     articles = pagination.items
-    return render_template('index.html', articles=articles,
+    return render_template('blog_index.html', articles=articles,
                            pagination=pagination, endpoint='.articleTypes',
                            id=id)
 
@@ -46,7 +46,7 @@ def article_sources(id):
             page, per_page=current_app.config['ARTICLES_PER_PAGE'],
             error_out=False)
     articles = pagination.items
-    return render_template('index.html', articles=articles,
+    return render_template('blog_index.html', articles=articles,
                            pagination=pagination, endpoint='.article_sources',
                            id=id)
 
@@ -87,6 +87,6 @@ def articleDetails(id):
         error_out=False)
     comments = pagination.items
     article.add_view(article, db)
-    return render_template('article_detials.html', User=User, article=article,
+    return render_template('article_details.html', User=User, article=article,
                            comments=comments, pagination=pagination, page=page,
                            form=form, endpoint='.articleDetails', id=article.id)

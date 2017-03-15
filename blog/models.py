@@ -54,6 +54,7 @@ class User(UserMixin, db.Model):
             url=url, hash=hash, size=size, default=default, rating=rating)
     '''
 
+
 class Menu(db.Model):
     __tablename__ = 'menus'
     id = db.Column(db.Integer, primary_key=True)
@@ -68,15 +69,15 @@ class Menu(db.Model):
 
     @staticmethod
     def insert_menus():
-        menus = [u'Web开发', u'数据库', u'网络技术', u'爱生活，爱自己',
-                 u'Linux世界', u'开发语言']
+        menus = [u'技术', u'行业', u'灵修', u'导师']
         for name in menus:
-            menu = Menu(name=name)
-            db.session.add(menu)
-            db.session.commit()
-            menu.order = menu.id
-            db.session.add(menu)
-            db.session.commit()
+            if Menu.query.filter_by(name=name).first() is None:
+                menu = Menu(name=name)
+                db.session.add(menu)
+                db.session.commit()
+                menu.order = menu.id
+                db.session.add(menu)
+                db.session.commit()
 
     @staticmethod
     def return_menus():
@@ -129,24 +130,18 @@ class ArticleType(db.Model):
 
     @staticmethod
     def insert_system_article_type():
-        article_type = ArticleType(name=u'未分类',
-                                  introduction=u'系统默认分类，不可删除。',
-                                  setting=ArticleTypeSetting.query.filter_by(protected=True).first()
-                                  )
+        article_type = ArticleType(name=u'未分类', introduction=u'系统默认分类，不可删除。',
+                                   setting=ArticleTypeSetting.query.filter_by(protected=True).first())
         db.session.add(article_type)
         db.session.commit()
 
     @staticmethod
     def insert_article_types():
-        article_types = ['Python', 'Java', 'JavaScript', 'Django',
-                        'CentOS', 'Ubuntu', 'MySQL', 'Redis',
-                        u'Linux成长之路', u'Linux运维实战', u'其它',
-                        u'思科网络技术', u'生活那些事', u'学校那些事',
-                        u'感情那些事', 'Flask']
+        article_types = ['Python', 'Java', u'创业', u'', u'金颖']
         for name in article_types:
-            article_type = ArticleType(name=name,
-                                      setting=ArticleTypeSetting(name=name))
-            db.session.add(article_type)
+            if ArticleType.query.filter_by(name=name).first() is None:
+                article_type = ArticleType(name=name, setting=ArticleTypeSetting(name=name))
+                db.session.add(article_type)
         db.session.commit()
 
     @property
@@ -177,9 +172,7 @@ class Source(db.Model):
 
     @staticmethod
     def insert_sources():
-        sources = (u'原创',
-                   u'转载',
-                   u'翻译')
+        sources = (u'原创', u'转载', u'翻译')
         for s in sources:
             source = Source.query.filter_by(name=s).first()
             if source is None:
@@ -193,10 +186,8 @@ class Source(db.Model):
 
 class Follow(db.Model):
     __tablename__ = 'follows'
-    follower_id = db.Column(db.Integer, db.ForeignKey('comments.id'),
-                           primary_key=True)
-    followed_id = db.Column(db.Integer, db.ForeignKey('comments.id'),
-                         primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
 
 
 class Comment(db.Model):
@@ -346,8 +337,8 @@ class BlogInfo(db.Model):
 
     @staticmethod
     def insert_blog_info():
-        blog_mini_info = BlogInfo(title=u'开源博客系统Blog_mini',
-                                  signature=u'让每个人都轻松拥有可管理的个人博客！— By xpleaf',
+        blog_mini_info = BlogInfo(title=u'Adam Heaven',
+                                  signature=u'随心所欲，气定神闲',
                                   navbar='inverse')
         db.session.add(blog_mini_info)
         db.session.commit()
@@ -367,7 +358,7 @@ class Plugin(db.Model):
         plugin = Plugin(title=u'博客统计',
                         note=u'系统插件',
                         content='system_plugin',
-			order=1)
+                        order=1)
         db.session.add(plugin)
         db.session.commit()
 

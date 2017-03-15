@@ -5,7 +5,7 @@ from flask import abort
 
 class AcquiredPermission:
     ROOT = 'Root'
-    ADMIN = 'Admin'
+    ADMIN = 'ModifyUser'
     POST_ARTICLE = 'PostArticle'
     POST_COMMENTS = 'PostComments'
     # READ = 'Reader'
