@@ -110,7 +110,7 @@ function get_articleType_info(url, id) {
         $('#editSetting_hide').val(data.setting_hide);
         $('#editIntroduction').val(data.introduction);
         $('#editMenus').val(data.menu);
-        $('#articleType_id').val(id);
+        $('#article_type_id').val(id);
         $('#ModalTitle').text('修改博文分类：' + data.name);
         if (data.name == '未分类') {
             $('#editName').prop('readonly', true);

@@ -45,7 +45,7 @@ def deploy_product_data():
     ArticleTypeSetting.insert_system_setting()
     # step_3:insert default article sources
     Source.insert_sources()
-    # step_4:insert default articleType
+    # step_4:insert default article_type
     ArticleType.insert_system_article_type()
     # step_5:insert system plugin
     Plugin.insert_system_plugin()
@@ -56,7 +56,7 @@ def deploy_product_data():
 def deploy_test_data():
     # step_1:insert navs
     Menu.insert_menus()
-    # step_2:insert articleTypes
+    # step_2:insert article_types
     ArticleType.insert_article_types()
     # step_3:generate random articles
     Article.generate_fake(10)

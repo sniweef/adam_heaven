@@ -17,6 +17,7 @@ from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
     CustomBlogInfoForm, AddBlogPluginForm, ChangePasswordForm, EditUserInfoForm
 from db import db
 from . import manage_blog_bp
+from um.models import User
 
 
 @manage_blog_bp.route('/')
@@ -43,11 +44,11 @@ def submitArticles():
         summary = form.summary.data
 
         source = Source.query.get(source_id)
-        articleType = ArticleType.query.get(type_id)
+        article_type = ArticleType.query.get(type_id)
 
-        if source and articleType:
+        if source and article_type:
             article = Article(title=title, content=content, summary=summary,
-                              source=source, articleType=articleType)
+                              source=source, article_type=article_type)
             db.session.add(article)
             db.session.commit()
             flash(u'发表博文成功！', 'success')
@@ -56,7 +57,7 @@ def submitArticles():
     if form.errors:
         flash(u'发表博文失败', 'danger')
 
-    return render_template('manage/submit_articles.html', form=form, endpoint='blog.submitArticles')
+    return render_template('manage/submit_articles.html', form=form, endpoint='.submitArticles')
 
 
 @manage_blog_bp.route('/edit-articles/<int:id>', methods=['GET', 'POST'])
@@ -71,8 +72,8 @@ def editArticles(id):
     form.types.choices = types
 
     if form.validate_on_submit():
-        articleType = ArticleType.query.get_or_404(int(form.types.data))
-        article.articleType = articleType
+        article_type = ArticleType.query.get_or_404(int(form.types.data))
+        article.article_type = article_type
         source = Source.query.get_or_404(int(form.source.data))
         article.source = source
 
@@ -83,12 +84,12 @@ def editArticles(id):
         db.session.add(article)
         db.session.commit()
         flash(u'博文更新成功！', 'success')
-        return redirect(url_for('main.articleDetails', id=article.id))
+        return redirect(url_for('blog.articleDetails', id=article.id))
 
     form.source.data = article.source_id
     form.title.data = article.title
     form.content.data = article.content
-    form.types.data = article.articleType_id
+    form.types.data = article.article_type_id
     form.summary.data = article.summary
     return render_template('manage/submit_articles.html', form=form)
 
@@ -126,8 +127,8 @@ def manage_articles():
 
         result = Article.query.order_by(Article.create_time.desc())
         if types_id != -1:
-            articleType = ArticleType.query.get_or_404(types_id)
-            result = result.filter_by(articleType=articleType)
+            article_type = ArticleType.query.get_or_404(types_id)
+            result = result.filter_by(article_type=article_type)
         if source_id != -1:
             source = Source.query.get_or_404(source_id)
             result = result.filter_by(source=source)
@@ -359,8 +360,8 @@ def manage_articleTypes():
 
     if form.validate_on_submit():
         name = form.name.data
-        articleType = ArticleType.query.filter_by(name=name).first()
-        if articleType:
+        article_type = ArticleType.query.filter_by(name=name).first()
+        if article_type:
             flash(u'添加分类失败！该分类名称已经存在。', 'danger')
         else:
             introduction = form.introduction.data
@@ -368,15 +369,15 @@ def manage_articleTypes():
             menu = Menu.query.get(form.menus.data)
             if not menu:
                menu = None
-            articleType = ArticleType(name=name, introduction=introduction, menu=menu,
+            article_type = ArticleType(name=name, introduction=introduction, menu=menu,
                                       setting=ArticleTypeSetting(name=name))
             if setting_hide == 1:
-                articleType.setting.hide = True
+                article_type.setting.hide = True
             if setting_hide == 2:
-                articleType.setting.hide = False
+                article_type.setting.hide = False
             # Note: to check whether introduction or menu is existing or not,
-            # just use if `articleType.introduction` or `if articleType.menu`.
-            db.session.add(articleType)
+            # just use if `article_type.introduction` or `if article_type.menu`.
+            db.session.add(article_type)
             db.session.commit()
             flash(u'添加分类成功！', 'success')
         return redirect(url_for('.manage_articleTypes'))
@@ -387,8 +388,8 @@ def manage_articleTypes():
     pagination = ArticleType.query.order_by(ArticleType.id.desc()).paginate(
         page, per_page=current_app.config['COMMENTS_PER_PAGE'],
         error_out=False)
-    articleTypes = pagination.items
-    return render_template('manage/manage_articleTypes.html', articleTypes=articleTypes,
+    article_types = pagination.items
+    return render_template('manage/manage_articleTypes.html', articleTypes=article_types,
                            pagination=pagination, endpoint='.manage_articleTypes',
                            form=form, form2=form2, page=page)
 # 提示，添加分类的验证表单也写在了上面，建议可以分开来写，这里只是提供一种方法，前面的也是如此
@@ -409,46 +410,46 @@ def edit_articleType():
 
     if form2.validate_on_submit():
         name = form2.name.data
-        articleType_id = int(form2.articleType_id.data)
-        articleType = ArticleType.query.get_or_404(articleType_id)
+        article_type_id = int(form2.article_type_id.data)
+        article_type = ArticleType.query.get_or_404(article_type_id)
         setting_hide = form2.setting_hide.data
 
-        if articleType.is_protected:
-            if form2.name.data != articleType.name or \
-                            form2.introduction.data != articleType.introduction:
+        if article_type.is_protected:
+            if form2.name.data != article_type.name or \
+                            form2.introduction.data != article_type.introduction:
                 flash(u'您只能修改系统默认分类的属性和所属导航！', 'danger')
             else:
                 menu = Menu.query.get(form2.menus.data)
                 if not menu:
                     menu = None
-                articleType.menu = menu
+                article_type.menu = menu
                 if setting_hide == 1:
-                    articleType.setting.hide = True
+                    article_type.setting.hide = True
                 if setting_hide == 2:
-                    articleType.setting.hide = False
-                db.session.add(articleType)
+                    article_type.setting.hide = False
+                db.session.add(article_type)
                 db.session.commit()
                 flash(u'修改系统默认分类成功！', 'success')
         elif ArticleType.query.filter_by(name=form2.name.data).first() \
-            and ArticleType.query.filter_by(name=form2.name.data).first().id != articleType_id:
+            and ArticleType.query.filter_by(name=form2.name.data).first().id != article_type_id:
                 flash(u'修改分类失败！该分类名称已经存在。', 'danger')
         else:
             introduction = form2.introduction.data
             menu = Menu.query.get(form2.menus.data)
             if not menu:
                menu = None
-            articleType = ArticleType.query.get_or_404(articleType_id)
-            articleType.name = name
-            articleType.introduction = introduction
-            articleType.menu = menu
-            if not articleType.setting:
-                articleType.setting = ArticleTypeSetting(name=articleType.name)
+            article_type = ArticleType.query.get_or_404(article_type_id)
+            article_type.name = name
+            article_type.introduction = introduction
+            article_type.menu = menu
+            if not article_type.setting:
+                article_type.setting = ArticleTypeSetting(name=article_type.name)
             if setting_hide == 1:
-                    articleType.setting.hide = True
+                    article_type.setting.hide = True
             if setting_hide == 2:
-                articleType.setting.hide = False
+                article_type.setting.hide = False
 
-            db.session.add(articleType)
+            db.session.add(article_type)
             db.session.commit()
             flash(u'修改分类成功！', 'success')
         return redirect(url_for('.manage_articleTypes', page=page))
@@ -462,21 +463,21 @@ def edit_articleType():
 def delete_articleType(id):
     page = request.args.get('page', 1, type=int)
 
-    articleType = ArticleType.query.get_or_404(id)
-    if articleType.is_protected:
+    article_type = ArticleType.query.get_or_404(id)
+    if article_type.is_protected:
         flash(u'警告：您没有删除系统默认分类的权限！', 'danger')
         return redirect(url_for('blog.manage_articleTypes', page=page))
     count = 0
     systemType = ArticleTypeSetting.query.filter_by(protected=True).first().types.first()
-    articleTypeSetting = ArticleTypeSetting.query.get(articleType.setting_id)
-    for article in articleType.articles.all():
+    articleTypeSetting = ArticleTypeSetting.query.get(article_type.setting_id)
+    for article in article_type.articles.all():
         count += 1
-        article.articleType_id = systemType.id
+        article.article_type_id = systemType.id
         db.session.add(article)
         db.session.commit()
     if articleTypeSetting:
         db.session.delete(articleTypeSetting)
-    db.session.delete(articleType)
+    db.session.delete(article_type)
     try:
         db.session.commit()
     except:
@@ -570,10 +571,10 @@ def delete_nav(id):
 
     nav = Menu.query.get_or_404(id)
     count = 0
-    for articleType in nav.types.all():
+    for article_type in nav.types.all():
         count += 1
-        articleType.menu = None
-        db.session.add(articleType)
+        article_type.menu = None
+        db.session.add(article_type)
     nav.sort_delete()
     db.session.delete(nav)
     try:
@@ -828,7 +829,7 @@ def account():
     form = ChangePasswordForm()
     form2 = EditUserInfoForm()
 
-    return render_template('manage/admin_account.html',
+    return render_template('manage/manage_account.html',
                            form=form, form2=form2)
 
 
@@ -838,15 +839,15 @@ def change_password():
     form = ChangePasswordForm()
 
     if form.validate_on_submit():
-        if current_user.verify_password(form.old_password.data):
-            current_user.password = form.password.data
-            db.session.add(current_user)
-            db.session.commit()
+        if current_user.verify_and_update_password(form.old_password.data, form.password.data):
             flash(u'修改密码成功！', 'success')
             return redirect(url_for('blog.account'))
         else:
             flash(u'修改密码失败！密码不正确！', 'danger')
             return redirect(url_for('blog.account'))
+    else:
+        flash(u'输入的两个新密码不一致！', 'danger')
+        return redirect(url_for('blog.account'))
 
 
 @manage_blog_bp.route('/account/edit-user-info', methods=['GET', 'POST'])
@@ -856,7 +857,7 @@ def edit_user_info():
 
     if form2.validate_on_submit():
         if current_user.verify_password(form2.password.data):
-            current_user.username = form2.username.data
+            current_user.nick_name = form2.username.data
             current_user.email = form2.email.data
             db.session.add(current_user)
             db.session.commit()
@@ -865,6 +866,9 @@ def edit_user_info():
         else:
             flash(u'修改用户信息失败！密码不正确！', 'danger')
             return redirect(url_for('blog.account'))
+    else:
+        flash(u'修改用户信息失败！', 'danger')
+        return redirect(url_for('blog.account'))
 
 
 @manage_blog_bp.route('/help')

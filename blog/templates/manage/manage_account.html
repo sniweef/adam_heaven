@@ -1,18 +1,18 @@
-{% extends 'manage/admin_base.html' %}
+{% extends 'manage/manage_base.html' %}
 
 {% block title %}
-    Blog_mini -欢迎来到Blog_mini管理平台！
+    Adam Heaven -欢迎来到Adam Heaven管理平台！
 {% endblock %}
 
 {% block admin_content %}
 <div class="entry-box account">
-    <h4><strong><i>{{ current_user.username }}</i>，欢迎来到Blog_mini管理平台！</strong></h4>
+    <h4><strong><i>{{ current_user.username }}</i>，欢迎来到Adam Heaven管理平台！</strong></h4>
     <hr/>
     <div class="user-info">
         <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=128) }}">
         <div class="profile-header">
             <h5>昵称：</h5>
-            <h4 class="username">{{ current_user.username }}</h4>
+            <h4 class="username">{{ current_user.nick_name }}</h4>
             <h5>电子邮件：</h5>
             <h4 class="email">{{ current_user.email }}</h4>
             <a class="btn btn-sm btn-danger" onclick="changePassword()">

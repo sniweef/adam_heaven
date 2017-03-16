@@ -29,3 +29,4 @@ class Config(object):
     # SQLALCHEMY_RECORD_QUERIES = True
     # SQLALCHEMY_DATABASE_URI = ''
     ARTICLES_PER_PAGE = 10
+    COMMENTS_PER_PAGE = 10

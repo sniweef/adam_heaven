@@ -1,8 +1,8 @@
-{% extends 'manage/admin_base.html' %}
+{% extends 'manage/manage_base.html' %}
 {% import "_macros.html" as macros %}
 
 {% block title %}
-    Blog_mini -分类导航
+    Adam Heaven -分类导航
 {% endblock %}
 
 {% block admin_content %}
@@ -35,7 +35,7 @@
                         <td>
                             {% if menu.types.count() %}
                                 {% for aritcleType in menu.types.all() %}
-                                    <a href="{{ url_for('blog.articleTypes', id=aritcleType.id) }}" target="_blank">
+                                    <a href="{{ url_for('blog.article_types', id=aritcleType.id) }}" target="_blank">
                                         {{ aritcleType.name }}
                                     </a>
                                 {% endfor %}

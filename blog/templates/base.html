@@ -46,7 +46,7 @@
                                     {% for article_type in menu.types.all() %}
                                         {% if not article_type.is_hide %}
                                             <li>
-                                                <a href="{{ url_for('blog.articleTypes', id=article_type.id) }}">
+                                                <a href="{{ url_for('blog.article_types', id=article_type.id) }}">
                                                     {{ article_type.name }}
                                                 </a>
                                             </li>
@@ -61,7 +61,7 @@
                         {% if not article_type.menu %}
                             {% if not article_type.is_hide %}
                                 <li>
-                                    <a href="{{ url_for('blog.articleTypes', id=article_type.id) }}">
+                                    <a href="{{ url_for('blog.article_types', id=article_type.id) }}">
                                         {{ article_type.name }}
                                     </a>
                                 </li>
@@ -138,7 +138,7 @@
 <div class="footer">
     <p class="footer-content">
         @2016
-        <a href="#">Blog_mini</a>
+        <a href="#">Adam Heaven</a>
         -开源博客系统
         {% if not current_user.is_authenticated %}
             -<a href="{{ url_for('security.login') }}">

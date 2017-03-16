@@ -1,8 +1,8 @@
-{% extends 'manage/admin_base.html' %}
+{% extends 'manage/manage_base.html' %}
 {% import "_macros.html" as macros %}
 
 {% block title %}
-    Blog_mini -管理博文
+    Adam Heaven -管理博文
 {% endblock %}
 
 {% block admin_content %}
@@ -68,8 +68,8 @@
                             </a>
                         </td>
                         <td>
-                            <a href="{{ url_for('blog.articleTypes', id=article.articleType.id) }}" target="_blank">
-                                {{ article.articleType.name }}
+                            <a href="{{ url_for('blog.article_types', id=article.article_type.id) }}" target="_blank">
+                                {{ article.article_type.name }}
                             </a>
                         </td>
                         <td>{{ moment(article.create_time.replace(microsecond=0)).format('LLL') }}</td>

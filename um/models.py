@@ -2,7 +2,7 @@ import hashlib
 from flask.ext.login import UserMixin
 from db import db
 from flask_security import UserMixin, RoleMixin
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_security.utils import encrypt_password, verify_password
 
 
 # Define models
@@ -86,6 +86,7 @@ class Role(db.Model, RoleMixin):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    nick_name = db.Column(db.String(255), unique=True)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
     email = db.Column(db.String(255), unique=True)
@@ -122,3 +123,15 @@ class User(db.Model, UserMixin):
         if User.query.filter_by(email=user.email).first() is None:
             db.session.add(user)
             db.session.commit()
+
+    def verify_password(self, password):
+        return verify_password(password, self.password)
+
+    def verify_and_update_password(self, old_password, new_password):
+        if verify_password(old_password, self.password):
+            self.password = encrypt_password(new_password)
+            db.session.add(self)
+            db.session.commit()
+            return True
+
+        return False

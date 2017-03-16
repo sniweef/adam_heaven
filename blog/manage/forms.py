@@ -46,7 +46,7 @@ class AddArticleTypeForm(Form):
 
 
 class EditArticleTypeForm(AddArticleTypeForm):
-    articleType_id = StringField(validators=[DataRequired()])
+    article_type_id = StringField(validators=[DataRequired()])
 
 
 class AddArticleTypeNavForm(Form):

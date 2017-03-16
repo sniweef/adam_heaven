@@ -3,6 +3,7 @@ from um.permissions import AcquiredPermission, permission_acquired
 from flask import render_template, request, current_app, redirect, url_for, flash
 from db import db
 from ..models import *
+from um.models import User
 from .forms import CommentForm
 
 
@@ -24,7 +25,7 @@ def index():
 
 
 @blog_main_bp.route('/article-types/<int:id>/')
-def articleTypes(id):
+def article_types(id):
     BlogView.add_view(db)
     page = request.args.get('page', 1, type=int)
     pagination = ArticleType.query.get_or_404(id).articles.order_by(
@@ -33,7 +34,7 @@ def articleTypes(id):
             error_out=False)
     articles = pagination.items
     return render_template('blog_index.html', articles=articles,
-                           pagination=pagination, endpoint='.articleTypes',
+                           pagination=pagination, endpoint='.article_types',
                            id=id)
 
 

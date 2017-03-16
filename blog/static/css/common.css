@@ -195,6 +195,7 @@ ul.comments .disabled-comment-admin-btn {
 }
 .manage-articles .list-handle {
     padding-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 /*CSS For manage articleTypes*/

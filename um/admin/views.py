@@ -2,7 +2,6 @@ from flask_security import current_user
 from flask_security.utils import encrypt_password
 from flask_admin.contrib import sqla
 from flask import abort, redirect, url_for, request
-from passlib.hash import pbkdf2_sha512
 from libs.logger import logger
 from flask import current_app
 from ..permissions import AcquiredPermission, has_permission
