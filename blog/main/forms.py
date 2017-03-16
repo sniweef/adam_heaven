@@ -1,10 +1,10 @@
-#coding:utf-8
-from flask.ext.wtf import Form
+# coding:utf-8
+from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, Optional
 
 
-class CommentForm(Form):
+class CommentForm(FlaskForm):
     name = StringField(u'昵称', validators=[DataRequired()])
     email = StringField(u'邮箱', validators=[DataRequired(), Length(1, 64),
                                             Email()])

@@ -12,8 +12,8 @@
     <p><span class="glyphicon glyphicon-book"></span>分类总数：<span class="badge">{{ ArticleType.query.count() }}</span></p>
     <div class="articleTypes-box">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="{{ url_for('blog.manage_articleTypes') }}">博文分类</a></li>
-            <li class=""><a href="{{ url_for('blog.manage_articleTypes_nav') }}">分类导航</a></li>
+            <li class="active"><a href="{{ url_for('blog.manage_article_types') }}">博文分类</a></li>
+            <li class=""><a href="{{ url_for('blog.manage_article_types_nav') }}">分类导航</a></li>
         </ul>
         <div class="articleTypes" id="articleTypes">
             <table class="table table-striped table-hover">
@@ -60,13 +60,13 @@
                         <td>{{ articleType.articles.count() }}</td>
                         <td>
                             <a class="btn" title="修改分类信息"
-                               onclick="get_articleType_info('{{ url_for('blog.get_articleType_info', id=articleType.id) }}', {{ articleType.id }})">
+                               onclick="get_article_type_info('{{ url_for('blog.get_article_type_info', id=articleType.id) }}', {{ articleType.id }})">
                                 <span class="glyphicon glyphicon-edit"></span>
                             </a>
                         </td>
                         <td>
                             <a class="btn btn-sm btn-default delete-articleType" title="删除分类"
-                               onclick="delArticleTypeCfm('{{ url_for('blog.delete_articleType', id=articleType.id, page=page) }}')">
+                               onclick="delArticleTypeCfm('{{ url_for('blog.delete_article_type', id=articleType.id, page=page) }}')">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
                         </td>
@@ -129,7 +129,7 @@
                 <h4 class="modal-title" id="ModalTitle"></h4>
             </div>
             <form id="editArticleTypeForm" method="post"
-                  action="{{ url_for('blog.edit_articleType', page=page) }}">
+                  action="{{ url_for('blog.edit_article_type', page=page) }}">
                 <div class="modal-body">
                         <div class="form-group">
                             {{ form2.csrf_token }}

@@ -1,5 +1,4 @@
 import hashlib
-from flask.ext.login import UserMixin
 from db import db
 from flask_security import UserMixin, RoleMixin
 from flask_security.utils import encrypt_password, verify_password

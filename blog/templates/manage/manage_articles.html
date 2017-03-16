@@ -61,7 +61,7 @@
                     {% for article in articles %}
                     <tr>
                         <td class="table-checkbox-or-left"><input type="checkbox" class="op_check" value="{{ article.id }}"></td>
-                        <td class="table-checkbox-or-left"><a href="{{ url_for('blog.articleDetails', id=article.id) }}" target="_blank">{{ article.title }}</a></td>
+                        <td class="table-checkbox-or-left"><a href="{{ url_for('blog.article_details', id=article.id) }}" target="_blank">{{ article.title }}</a></td>
                         <td>
                             <a href="{{ url_for('blog.article_sources', id=article.source.id) }}" target="_blank">
                                 {{ article.source.name }}

@@ -38,7 +38,7 @@
                     {% endif %}
                 </span>
                 <span>
-                    在《<a href="{{ url_for('blog.articleDetails', id=comment.article.id) }}" target="_blank">{{ comment.article.title }}</a>》
+                    在《<a href="{{ url_for('blog.article_details', id=comment.article.id) }}" target="_blank">{{ comment.article.title }}</a>》
                     发表评论：
                 </span>
                 <a class="btn btn-sm btn-info comment-handle-admin" title="回复评论"

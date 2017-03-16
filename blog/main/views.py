@@ -53,7 +53,7 @@ def article_sources(id):
 
 
 @blog_main_bp.route('/article-detials/<int:id>', methods=['GET', 'POST'])
-def articleDetails(id):
+def article_details(id):
     BlogView.add_view(db)
     form = CommentForm(request.form, follow=-1)
     article = Article.query.get_or_404(id)
@@ -75,7 +75,7 @@ def articleDetails(id):
             db.session.add(comment)
             db.session.commit()
         flash(u'提交评论成功！', 'success')
-        return redirect(url_for('.articleDetails', id=article.id, page=-1))
+        return redirect(url_for('.article_details', id=article.id, page=-1))
     if form.errors:
         flash(u'发表评论失败', 'danger')
 
@@ -90,4 +90,4 @@ def articleDetails(id):
     article.add_view(article, db)
     return render_template('article_details.html', User=User, article=article,
                            comments=comments, pagination=pagination, page=page,
-                           form=form, endpoint='.articleDetails', id=article.id)
+                           form=form, endpoint='.article_details', id=article.id)

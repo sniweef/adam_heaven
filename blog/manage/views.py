@@ -1,15 +1,10 @@
 # coding:utf-8
-import sys
-from imp import reload
-reload(sys)
-# sys.setdefaultencoding('utf-8')
-
 from datetime import datetime
 import json
 from flask import render_template, redirect, flash, \
     url_for, request, current_app, jsonify
-from flask.ext.login import login_required, current_user
-from ..models import ArticleType, Source, Article, article_types, \
+from flask_login import login_required, current_user
+from ..models import ArticleType, Source, Article, \
     Comment, Follow, Menu, ArticleTypeSetting, BlogInfo, Plugin
 from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
     DeleteArticlesForm, AdminCommentForm, DeleteCommentsForm, AddArticleTypeForm, \
@@ -53,7 +48,7 @@ def submitArticles():
             db.session.commit()
             flash(u'发表博文成功！', 'success')
             article_id = Article.query.filter_by(title=title).first().id
-            return redirect(url_for('blog.articleDetails', id=article_id))
+            return redirect(url_for('blog.article_details', id=article_id))
     if form.errors:
         flash(u'发表博文失败', 'danger')
 
@@ -84,7 +79,7 @@ def editArticles(id):
         db.session.add(article)
         db.session.commit()
         flash(u'博文更新成功！', 'success')
-        return redirect(url_for('blog.articleDetails', id=article.id))
+        return redirect(url_for('blog.article_details', id=article.id))
 
     form.source.data = article.source_id
     form.title.data = article.title
@@ -228,7 +223,7 @@ def disable_comment(id):
         return redirect(url_for('blog.manage_comments',
                                 page=page))
 
-    return redirect(url_for('blog.articleDetails',
+    return redirect(url_for('blog.article_details',
                             id=comment.article_id,
                             page=request.args.get('page', 1, type=int)))
 
@@ -246,7 +241,7 @@ def enable_comment(id):
         return redirect(url_for('blog.manage_comments',
                                 page=page))
 
-    return redirect(url_for('blog.articleDetails',
+    return redirect(url_for('blog.article_details',
                             id=comment.article_id,
                             page=request.args.get('page', 1, type=int)))
 
@@ -272,7 +267,7 @@ def delete_comment(id):
         return redirect(url_for('blog.manage_comments',
                                 page=page))
 
-    return redirect(url_for('blog.articleDetails',
+    return redirect(url_for('blog.article_details',
                             id=article_id,
                             page=request.args.get('page', 1, type=int)))
 
@@ -344,7 +339,7 @@ def delete_comments():
 
 @manage_blog_bp.route('/manage-articleTypes', methods=['GET', 'POST'])
 @login_required
-def manage_articleTypes():
+def manage_article_types():
     form = AddArticleTypeForm(menus=-1)
     form2= EditArticleTypeForm()
 
@@ -380,17 +375,17 @@ def manage_articleTypes():
             db.session.add(article_type)
             db.session.commit()
             flash(u'添加分类成功！', 'success')
-        return redirect(url_for('.manage_articleTypes'))
+        return redirect(url_for('.manage_article_types'))
     if form.errors:
         flash(u'添加分类失败！请查看填写有无错误。', 'danger')
-        return redirect(url_for('.manage_articleTypes'))
+        return redirect(url_for('.manage_article_types'))
 
     pagination = ArticleType.query.order_by(ArticleType.id.desc()).paginate(
         page, per_page=current_app.config['COMMENTS_PER_PAGE'],
         error_out=False)
     article_types = pagination.items
     return render_template('manage/manage_articleTypes.html', articleTypes=article_types,
-                           pagination=pagination, endpoint='.manage_articleTypes',
+                           pagination=pagination, endpoint='.manage_article_types',
                            form=form, form2=form2, page=page)
 # 提示，添加分类的验证表单也写在了上面，建议可以分开来写，这里只是提供一种方法，前面的也是如此
 # 虽然分开来写会多写一点代码，但这样的逻辑就更清晰了
@@ -398,7 +393,7 @@ def manage_articleTypes():
 
 
 @manage_blog_bp.route('/manage-articletypes/edit-articleType', methods=['POST'])
-def edit_articleType():
+def edit_article_type():
     form2= EditArticleTypeForm()
 
     menus = Menu.return_menus()
@@ -452,21 +447,21 @@ def edit_articleType():
             db.session.add(article_type)
             db.session.commit()
             flash(u'修改分类成功！', 'success')
-        return redirect(url_for('.manage_articleTypes', page=page))
+        return redirect(url_for('.manage_article_types', page=page))
     if form2.errors:
         flash(u'修改分类失败！请查看填写有无错误。', 'danger')
-        return redirect(url_for('.manage_articleTypes', page=page))
+        return redirect(url_for('.manage_article_types', page=page))
 
 
 @manage_blog_bp.route('/manage-articleTypes/delete-articleType/<int:id>')
 @login_required
-def delete_articleType(id):
+def delete_article_type(id):
     page = request.args.get('page', 1, type=int)
 
     article_type = ArticleType.query.get_or_404(id)
     if article_type.is_protected:
         flash(u'警告：您没有删除系统默认分类的权限！', 'danger')
-        return redirect(url_for('blog.manage_articleTypes', page=page))
+        return redirect(url_for('blog.manage_article_types', page=page))
     count = 0
     systemType = ArticleTypeSetting.query.filter_by(protected=True).first().types.first()
     articleTypeSetting = ArticleTypeSetting.query.get(article_type.setting_id)
@@ -485,12 +480,12 @@ def delete_articleType(id):
         flash(u'删除分类失败！', 'danger')
     else:
         flash(u'删除分类成功！同时将原来该分类的%s篇博文添加到<未分类>。' % count, 'success')
-    return redirect(url_for('blog.manage_articleTypes', page=page))
+    return redirect(url_for('blog.manage_article_types', page=page))
 
 
 @manage_blog_bp.route('/manage-articleTypes/get-articleType-info/<int:id>')
 @login_required
-def get_articleType_info(id):
+def get_article_type_info(id):
     if request.is_xhr:
         articletype = ArticleType.query.get_or_404(id)
         if articletype.is_hide:
@@ -507,7 +502,7 @@ def get_articleType_info(id):
 
 @manage_blog_bp.route('/manage-articleTypes/nav', methods=['GET', 'POST'])
 @login_required
-def manage_articleTypes_nav():
+def manage_article_types_nav():
     form = AddArticleTypeNavForm()
     form2 = EditArticleNavTypeForm()
     form3 = SortArticleNavTypeForm()
@@ -526,7 +521,7 @@ def manage_articleTypes_nav():
             db.session.commit()
             page = -1
             flash(u'添加导航成功！', 'success')
-        return redirect(url_for('blog.manage_articleTypes_nav', page=page))
+        return redirect(url_for('blog.manage_article_types_nav', page=page))
     if page == -1:
         page = (Menu.query.count() - 1) // \
                current_app.config['COMMENTS_PER_PAGE'] + 1
@@ -535,7 +530,7 @@ def manage_articleTypes_nav():
             error_out=False)
     menus = pagination.items
     return render_template('manage/manage_articleTypes_nav.html', menus=menus,
-                           pagination=pagination, endpoint='.manage_articleTypes_nav',
+                           pagination=pagination, endpoint='.manage_article_types_nav',
                            page=page, form=form, form2=form2, form3=form3)
 
 
@@ -558,10 +553,10 @@ def edit_nav():
             db.session.add(nav)
             db.session.commit()
             flash(u'修改导航成功！', 'success')
-        return redirect(url_for('blog.manage_articleTypes_nav', page=page))
+        return redirect(url_for('blog.manage_article_types_nav', page=page))
     if form2.errors:
         flash(u'修改导航失败！请查看填写有无错误。', 'danger')
-        return redirect(url_for('blog.manage_articleTypes_nav', page=page))
+        return redirect(url_for('blog.manage_article_types_nav', page=page))
 
 
 @manage_blog_bp.route('/manage-articleTypes/nav/delete-nav/<int:id>')
@@ -584,7 +579,7 @@ def delete_nav(id):
         flash(u'删除导航失败！', 'danger')
     else:
         flash(u'删除导航成功！同时将原来该导航的%s种分类的导航设置为无。' % count, 'success')
-    return redirect(url_for('blog.manage_articleTypes_nav', page=page))
+    return redirect(url_for('blog.manage_article_types_nav', page=page))
 
 
 @manage_blog_bp.route('/manage-articleTypes/nav/sort-up/<int:id>')
@@ -602,7 +597,7 @@ def nav_sort_up(id):
         flash(u'成功将该导航升序！', 'success')
     else:
         flash(u'该导航已经位于最前面！', 'danger')
-    return redirect(url_for('blog.manage_articleTypes_nav', page=page))
+    return redirect(url_for('blog.manage_article_types_nav', page=page))
 
 
 @manage_blog_bp.route('/manage-articleTypes/nav/sort-down/<int:id>')
@@ -620,12 +615,13 @@ def nav_sort_down(id):
         flash(u'成功将该导航降序！', 'success')
     else:
         flash(u'该导航已经位于最后面！', 'danger')
-    return redirect(url_for('blog.manage_articleTypes_nav', page=page))
+
+    return redirect(url_for('blog.manage_article_types_nav', page=page))
 
 
 @manage_blog_bp.route('/manage-articleTypes/get-articleTypeNav-info/<int:id>')
 @login_required
-def get_articleTypeNav_info(id):
+def get_article_type_nav_info(id):
     if request.is_xhr:
         menu = Menu.query.get_or_404(id)
         return jsonify({
@@ -873,6 +869,5 @@ def edit_user_info():
 
 @manage_blog_bp.route('/help')
 @login_required
-def help():
-
+def show_help():
     return render_template('manage/help_page.html')

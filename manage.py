@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_script import Manager
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CSRFProtect
 from libs.logger import logger
 from libs.scanner import SourceScanner
 from libs.configs import load_config
@@ -12,7 +12,7 @@ def create_app():
 
     os.environ['MODE'] = 'DEVELOPMENT'
     app.config.from_object(load_config())
-    CsrfProtect(app)
+    CSRFProtect(app)
     return app
 
 

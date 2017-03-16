@@ -41,7 +41,7 @@ $(document).ready(function () {
     });
 });
 
-//JS For confirm to delete a comment in articleDetails page
+//JS For confirm to delete a comment in article_details page
 function delCommentCfm(url) {
     $('#delCommentCfmClick').click(function(){
         window.location.href = url;
@@ -104,7 +104,7 @@ function delArticleTypeCfm(url) {
 }
 
 //JS For edit articleType to get its info
-function get_articleType_info(url, id) {
+function get_article_type_info(url, id) {
     $.getJSON(url, function(data) {
         $('#editName').val(data.name);
         $('#editSetting_hide').val(data.setting_hide);
@@ -131,7 +131,7 @@ $(document).ready(function() {
 });
 
 //JS For edit articleTypeNav to get its info
-function get_articleTypeNav_info(url) {
+function get_article_type_nav_info(url) {
     $.getJSON(url, function(data) {
         $('#editNavName').val(data.name);
         $('#nav_id').val(data.nav_id);

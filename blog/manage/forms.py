@@ -1,12 +1,12 @@
 # coding:utf-8
-from flask.ext.wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, TextAreaField, SubmitField, \
     PasswordField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from ..main.forms import CommentForm
 
 
-class CommonForm(Form):
+class CommonForm(FlaskForm):
     types = SelectField(u'博文分类', coerce=int, validators=[DataRequired()])
     source = SelectField(u'博文来源', coerce=int, validators=[DataRequired()])
 
@@ -21,15 +21,15 @@ class ManageArticlesForm(CommonForm):
     pass
 
 
-class DeleteArticleForm(Form):
+class DeleteArticleForm(FlaskForm):
     articleId = StringField(validators=[DataRequired()])
 
 
-class DeleteArticlesForm(Form):
+class DeleteArticlesForm(FlaskForm):
     articleIds = StringField(validators=[DataRequired()])
 
 
-class DeleteCommentsForm(Form):
+class DeleteCommentsForm(FlaskForm):
     commentIds = StringField(validators=[DataRequired()])
 
 
@@ -37,7 +37,7 @@ class AdminCommentForm(CommentForm):
     article = StringField(validators=[DataRequired()])
 
 
-class AddArticleTypeForm(Form):
+class AddArticleTypeForm(FlaskForm):
     name = StringField(u'分类名称', validators=[DataRequired(), Length(1, 64)])
     introduction = TextAreaField(u'分类介绍')
     setting_hide = SelectField(u'属性', coerce=int, validators=[DataRequired()])
@@ -49,7 +49,7 @@ class EditArticleTypeForm(AddArticleTypeForm):
     article_type_id = StringField(validators=[DataRequired()])
 
 
-class AddArticleTypeNavForm(Form):
+class AddArticleTypeNavForm(FlaskForm):
     name = StringField(u'导航名称', validators=[DataRequired(), Length(1, 64)])
 
 
@@ -61,26 +61,26 @@ class SortArticleNavTypeForm(AddArticleTypeNavForm):
     order = StringField(u'序号', validators=[DataRequired()])
 
 
-class CustomBlogInfoForm(Form):
+class CustomBlogInfoForm(FlaskForm):
     title = StringField(u'博客标题', validators=[DataRequired()])
     signature = TextAreaField(u'个性签名', validators=[DataRequired()])
     navbar = SelectField(u'导航样式', coerce=int, validators=[DataRequired()])
 
 
-class AddBlogPluginForm(Form):
+class AddBlogPluginForm(FlaskForm):
     title = StringField(u'插件名称', validators=[DataRequired()])
     note = TextAreaField(u'备注')
     content = TextAreaField(u'内容', validators=[DataRequired()])
 
 
-class ChangePasswordForm(Form):
+class ChangePasswordForm(FlaskForm):
     old_password = PasswordField(u'原来密码', validators=[DataRequired()])
     password = PasswordField(u'新密码', validators=[
         DataRequired(), EqualTo('password2', message=u'两次输入密码不一致！')])
     password2 = PasswordField(u'确认新密码', validators=[DataRequired()])
 
 
-class EditUserInfoForm(Form):
+class EditUserInfoForm(FlaskForm):
     username = StringField(u'昵称', validators=[DataRequired()])
     email = StringField(u'电子邮件', validators=[DataRequired(), Length(1, 64), Email()])
     password = PasswordField(u'密码确认', validators=[DataRequired()])

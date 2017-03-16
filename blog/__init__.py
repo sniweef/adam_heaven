@@ -3,8 +3,8 @@ from libs.logger import logger
 from libs.utils import register_sub_bp
 import os.path as op
 from .models import *
-from flask.ext.moment import Moment
-from flask.ext.bootstrap import Bootstrap
+from flask_moment import Moment
+from flask_bootstrap import Bootstrap
 
 
 moment = Moment()
@@ -23,7 +23,7 @@ def get_blog_bp():
 def set_up_blog(app, manager):
     # Global variables to jiajia2 environment:
     app.jinja_env.globals['ArticleType'] = ArticleType
-    app.jinja_env.globals['article_types'] = article_types
+    # app.jinja_env.globals['article_types'] = article_types
     app.jinja_env.globals['Menu'] = Menu
     app.jinja_env.globals['BlogInfo'] = BlogInfo
     app.jinja_env.globals['Plugin'] = Plugin
