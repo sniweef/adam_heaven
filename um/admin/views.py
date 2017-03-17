@@ -8,6 +8,7 @@ from ..permissions import AcquiredPermission, has_permission
 
 
 class AccessCheckView(sqla.ModelView):
+    column_exclude_list = ['password', 'content']
 
     def __init__(self, *args, **kwargs):
         self.permission = kwargs.pop('permission', AcquiredPermission.ADMIN)
