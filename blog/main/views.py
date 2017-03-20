@@ -76,6 +76,7 @@ def article_details(id):
             db.session.commit()
         flash(u'提交评论成功！', 'success')
         return redirect(url_for('.article_details', id=article.id, page=-1))
+
     if form.errors:
         flash(u'发表评论失败', 'danger')
 

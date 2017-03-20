@@ -23,7 +23,7 @@ def manager():
 
 @manage_blog_bp.route('/submit-articles', methods=['GET', 'POST'])
 @login_required
-def submitArticles():
+def submit_articles():
     form = SubmitArticlesForm()
 
     sources = [(s.id, s.name) for s in Source.query.all()]
@@ -49,10 +49,11 @@ def submitArticles():
             flash(u'发表博文成功！', 'success')
             article_id = Article.query.filter_by(title=title).first().id
             return redirect(url_for('blog.article_details', id=article_id))
+
     if form.errors:
         flash(u'发表博文失败', 'danger')
 
-    return render_template('manage/submit_articles.html', form=form, endpoint='.submitArticles')
+    return render_template('manage/submit_articles.html', form=form, endpoint='.submit_articles')
 
 
 @manage_blog_bp.route('/edit-articles/<int:id>', methods=['GET', 'POST'])
@@ -168,6 +169,7 @@ def delete_article():
             flash(u'删除失败！', 'danger')
         else:
             flash(u'成功删除博文和%s条评论！' % count, 'success')
+
     if form.errors:
         flash(u'删除失败！', 'danger')
 
@@ -296,6 +298,7 @@ def manage_comments():
         db.session.commit()
         flash(u'提交评论成功！', 'success')
         return redirect(url_for('.manage_comments'))
+
     if form.errors:
         flash(u'提交评论失败！请查看填写有无错误。', 'danger')
         return redirect(url_for('.manage_comments'))
@@ -376,6 +379,7 @@ def manage_article_types():
             db.session.commit()
             flash(u'添加分类成功！', 'success')
         return redirect(url_for('.manage_article_types'))
+
     if form.errors:
         flash(u'添加分类失败！请查看填写有无错误。', 'danger')
         return redirect(url_for('.manage_article_types'))

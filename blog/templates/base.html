@@ -77,9 +77,9 @@
                                 {{ current_user.username }} <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('blog.submitArticles') }}">发表博文</a></li>
+                                <li><a href="{{ url_for('blog.submit_articles') }}">发表博文</a></li>
                                 <li><a href="{{ url_for('blog.account') }}">管理博客</a></li>
-                                <li><a href="{{ url_for('security.logout') }}?next={{ request.path }}">退出登陆</a></li>
+                                <li><a href="{{ url_for('security.logout', next=request.path) }}">退出登陆</a></li>
                             </ul>
                         </li>
                     {% endif %}
@@ -141,7 +141,7 @@
         <a href="#">Adam Heaven</a>
         -开源博客系统
         {% if not current_user.is_authenticated %}
-            -<a href="{{ url_for('security.login') }}?next={{ request.path }}">
+            -<a href="{{ url_for('security.login', next=request.path) }}">
             <span class="glyphicon glyphicon-wrench">后台管理</span>
         </a>
         {% endif %}
