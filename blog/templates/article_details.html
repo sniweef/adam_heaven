@@ -24,7 +24,7 @@
     </div>
     {% if current_user.is_authenticated %}
     <div class="article-edit">
-        <a href="{{ url_for('blog.editArticles', id=article.id) }}">
+        <a href="{{ url_for('blog.edit_articles', id=article.id) }}">
             <button type="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-pencil"></span>
                 编辑
@@ -38,8 +38,11 @@
     <div class="pagination">
         {{ macros.pagination_widget(pagination, endpoint, id=id, fragment='#comments') }}
     </div>
+
+    {% if current_user.is_authenticated %}
     <h4  id="submit-comment"><span class="glyphicon glyphicon-comment">发表评论</span></h4>
     {% include "_submit_comment.html" %}
+    {% endif %}
 </div>
 {% endblock %}
 

@@ -42,4 +42,14 @@
 {% block script %}
     {{ super() }}
     <script src="{{ url_for('blog.static', filename='js/admin.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            {% if not has_permission|default(True) %}
+            $('.btn').attr('disabled', true);
+            $('#goTop').attr('disabled', false);
+            $('#refresh').attr('disabled', false);
+            $('#goBottom').attr('disabled', false);
+            {% endif %}
+        });
+    </script>
 {% endblock %}

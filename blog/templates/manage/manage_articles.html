@@ -74,7 +74,7 @@
                         </td>
                         <td>{{ moment(article.create_time.replace(microsecond=0)).format('LLL') }}</td>
                         <td>
-                            <a href="{{ url_for('blog.editArticles', id=article.id) }}">
+                            <a href="{{ url_for('blog.edit_articles', id=article.id) }}">
                                 <span class="glyphicon glyphicon-pencil" title="编辑博文"></span>
                             </a>
                         </td>

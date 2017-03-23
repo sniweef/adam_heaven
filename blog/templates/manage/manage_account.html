@@ -12,7 +12,7 @@
         <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=128) }}">
         <div class="profile-header">
             <h5>昵称：</h5>
-            <h4 class="username">{{ current_user.nick_name }}</h4>
+            <h4 class="username">{{ current_user.nick_name|default('%s %s'|format(current_user.first_name, current_user.last_name), true) }}</h4>
             <h5>电子邮件：</h5>
             <h4 class="email">{{ current_user.email }}</h4>
             <a class="btn btn-sm btn-danger" onclick="changePassword()">

@@ -8,6 +8,7 @@ class AcquiredPermission:
     ADMIN = 'ModifyUser'
     POST_ARTICLE = 'PostArticle'
     POST_COMMENTS = 'PostComments'
+    MODIFY_BLOG = 'ModifyBlog'
     # READ = 'Reader'
 
 
@@ -39,3 +40,5 @@ def permission_acquired(permission):
         return wrapper
 
     return decorator
+
+modify_blog_acquired = permission_acquired(AcquiredPermission.MODIFY_BLOG)

@@ -13,6 +13,7 @@ from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
 from db import db
 from . import manage_blog_bp
 from um.models import User
+from um.permissions import *
 
 
 @manage_blog_bp.route('/')
@@ -58,7 +59,7 @@ def submit_articles():
 
 @manage_blog_bp.route('/edit-articles/<int:id>', methods=['GET', 'POST'])
 @login_required
-def editArticles(id):
+def edit_articles(id):
     article = Article.query.get_or_404(id)
     form = SubmitArticlesForm()
 
@@ -356,10 +357,14 @@ def manage_article_types():
     page = request.args.get('page', 1, type=int)
     # sub_type = request.args.get('type')
 
+    is_permit = has_permission(AcquiredPermission.MODIFY_BLOG)
+
     if form.validate_on_submit():
         name = form.name.data
         article_type = ArticleType.query.filter_by(name=name).first()
-        if article_type:
+        if not is_permit:
+            flash(u'无修改权限。', 'danger')
+        elif article_type:
             flash(u'添加分类失败！该分类名称已经存在。', 'danger')
         else:
             introduction = form.introduction.data
@@ -390,7 +395,7 @@ def manage_article_types():
     article_types = pagination.items
     return render_template('manage/manage_articleTypes.html', articleTypes=article_types,
                            pagination=pagination, endpoint='.manage_article_types',
-                           form=form, form2=form2, page=page)
+                           form=form, form2=form2, page=page, has_permission=is_permit)
 # 提示，添加分类的验证表单也写在了上面，建议可以分开来写，这里只是提供一种方法，前面的也是如此
 # 虽然分开来写会多写一点代码，但这样的逻辑就更清晰了
 # 另外需要注意的是，两个验证表单写在同一个view当中会出现问题，所以建议还是分开来写
@@ -511,6 +516,8 @@ def manage_article_types_nav():
     form2 = EditArticleNavTypeForm()
     form3 = SortArticleNavTypeForm()
 
+    is_permit = has_permission(AcquiredPermission.MODIFY_BLOG)
+
     page = request.args.get('page', 1, type=int)
     if form.validate_on_submit():
         name = form.name.data
@@ -526,6 +533,7 @@ def manage_article_types_nav():
             page = -1
             flash(u'添加导航成功！', 'success')
         return redirect(url_for('blog.manage_article_types_nav', page=page))
+
     if page == -1:
         page = (Menu.query.count() - 1) // \
                current_app.config['COMMENTS_PER_PAGE'] + 1
@@ -535,7 +543,7 @@ def manage_article_types_nav():
     menus = pagination.items
     return render_template('manage/manage_articleTypes_nav.html', menus=menus,
                            pagination=pagination, endpoint='.manage_article_types_nav',
-                           page=page, form=form, form2=form2, form3=form3)
+                           page=page, form=form, form2=form2, form3=form3, has_permission=is_permit)
 
 
 @manage_blog_bp.route('/manage-articleTypes/nav/edit-nav', methods=['GET', 'POST'])
@@ -558,6 +566,7 @@ def edit_nav():
             db.session.commit()
             flash(u'修改导航成功！', 'success')
         return redirect(url_for('blog.manage_article_types_nav', page=page))
+
     if form2.errors:
         flash(u'修改导航失败！请查看填写有无错误。', 'danger')
         return redirect(url_for('blog.manage_article_types_nav', page=page))
@@ -642,21 +651,27 @@ def custom_blog_info():
     navbars = [(1, u'魅力黑'), (2, u'优雅白')]
     form.navbar.choices = navbars
 
-    if form.validate_on_submit():
-        blog = BlogInfo.query.first()
-        blog.title = form.title.data
-        blog.signature = form.signature.data
-        if form.navbar.data == 1:
-            blog.navbar = 'inverse'
-        if form.navbar.data == 2:
-            blog.navbar = 'default'
-        db.session.add(blog)
-        db.session.commit()
+    permit = has_permission(AcquiredPermission.MODIFY_BLOG)
 
-        flash(u'修改博客基本信息成功！', 'success')
+    if form.validate_on_submit():
+        if not permit:
+            flash(u'无修改权限，请联系管理员！', 'danger')
+        else:
+            blog = BlogInfo.query.first()
+            blog.title = form.title.data
+            blog.signature = form.signature.data
+            if form.navbar.data == 1:
+                blog.navbar = 'inverse'
+            if form.navbar.data == 2:
+                blog.navbar = 'default'
+            db.session.add(blog)
+            db.session.commit()
+
+            flash(u'修改博客基本信息成功！', 'success')
+
         return redirect(url_for('blog.custom_blog_info'))
 
-    return render_template('manage/custom_blog_info.html', form=form)
+    return render_template('manage/custom_blog_info.html', form=form, has_permission=permit)
 
 
 @manage_blog_bp.route('/custom/blog-info/get')
@@ -687,7 +702,7 @@ def custom_blog_plugin():
 
     return render_template('manage/custom_blog_plugin.html',
                            Plugin=Plugin, pagination=pagination, endpoint='.custom_blog_plugin',
-                           plugins=plugins, page=page)
+                           plugins=plugins, page=page, has_permission=has_permission(AcquiredPermission.MODIFY_BLOG))
 
 
 @manage_blog_bp.route('/custom/blog-plugin/delete/<int:id>')
@@ -745,7 +760,7 @@ def plugin_sort_down(id):
 
 
 @manage_blog_bp.route('/custom/blog-plugin/disable/<int:id>')
-@login_required
+@modify_blog_acquired
 def disable_plugin(id):
     page = request.args.get('page', 1, type=int)
 
@@ -758,7 +773,7 @@ def disable_plugin(id):
 
 
 @manage_blog_bp.route('/custom/blog-plugin/enable/<int:id>')
-@login_required
+@modify_blog_acquired
 def enable_plugin(id):
     page = request.args.get('page', 1, type=int)
 
@@ -774,11 +789,15 @@ def enable_plugin(id):
 @login_required
 def add_plugin():
     form = AddBlogPluginForm()
+    is_permit = has_permission(AcquiredPermission.MODIFY_BLOG)
 
     if form.validate_on_submit():
         title = form.title.data
         plugin = Plugin.query.filter_by(title=title).first()
-        if plugin:
+        if not is_permit:
+            flash(u'没有权限', 'danger')
+            return render_template('manage/blog_plugin_add.html', form=form)
+        elif plugin:
             form = AddBlogPluginForm(title=title, note=form.note.data,
                                      content=form.content.data)
             flash(u'添加插件失败！该插件名称已经存在。', 'danger')
@@ -794,11 +813,11 @@ def add_plugin():
             flash(u'添加插件成功！', 'success')
         return redirect(url_for('blog.custom_blog_plugin'))
 
-    return render_template('manage/blog_plugin_add.html', form=form)
+    return render_template('manage/blog_plugin_add.html', form=form, has_permission=is_permit)
 
 
 @manage_blog_bp.route('/custom/blog-plugin/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
+@modify_blog_acquired
 def edit_plugin(id):
     page = request.args.get('page', 1, type=int)
     plugin = Plugin.query.get_or_404(id)

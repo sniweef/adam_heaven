@@ -1,10 +1,11 @@
 import os
 from flask import Flask
-from flask_script import Manager
+from flask_script import Manager, Shell
 from flask_wtf.csrf import CSRFProtect
 from libs.logger import logger
 from libs.scanner import SourceScanner
 from libs.configs import load_config
+from db import DbManager, db
 
 
 def create_app():
@@ -17,7 +18,6 @@ def create_app():
 
 
 def set_up_modules(app, manager):
-    from db import DbManager
     DbManager.set_up_db(app, manager)
 
     for _, name in SourceScanner('.', r'set_up_(\w+)').apply_scanned_function(app, manager):
@@ -41,7 +41,7 @@ def deploy_test_data():
         pass
 
 
-def add_manager_cmd(manager):
+def add_manager_cmd(manager, app):
     @manager.command
     def deploy(deploy_type):
         from flask.ext.migrate import upgrade
@@ -56,6 +56,11 @@ def add_manager_cmd(manager):
         if deploy_type == 'test_data':
             deploy_test_data()
 
+    def make_shell_context():
+        return dict(db=db, app=app)
+
+    manager.add_command("shell", Shell(make_context=make_shell_context))
+
 
 if __name__ == '__main__':
     app = create_app()
@@ -64,6 +69,6 @@ if __name__ == '__main__':
     set_up_modules(app, manager)
     scan_blueprints(app)
 
-    add_manager_cmd(manager)
+    add_manager_cmd(manager, app)
 
     manager.run()
